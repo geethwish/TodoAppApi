@@ -1,13 +1,16 @@
 const asyncHandler = require('express-async-handler');
+const Sequelize = require('sequelize');
+const sequelize = require('../config/db');;
 
-const Todo = require('../models/todoModel');
+const Todos = require('../models/todos')
+    (sequelize, Sequelize.DataTypes, Sequelize.Model);
 
 //@desc     Get Todo List
 //@route    GET /api/todoList
 //@access   private
 const getTodoList = asyncHandler(async (req, res) => {
 
-    const todoList = await Todo.find();
+    const todoList = await Todos.findAll();
 
     res.status(200).json(todoList);
 
@@ -27,8 +30,12 @@ const createTodo = asyncHandler(async (req, res) => {
 
     }
 
-    const todo = await Todo.create({
-        task: req.body.task
+    const todo = await Todos.create({
+        //task: req.body.task
+        task: "task 1",
+        description: "sample description",
+        status: "pending",
+        userId: "1"
     });
 
     res.status(200).json({
@@ -44,7 +51,7 @@ const createTodo = asyncHandler(async (req, res) => {
 //@access   private
 const updateTodo = asyncHandler(async (req, res) => {
 
-    const todo = await Todo.findById(req.params.id);
+    const todo = await Todos.findByPk(req.params.id);
 
     if (!todo) {
 
@@ -54,10 +61,15 @@ const updateTodo = asyncHandler(async (req, res) => {
 
     }
 
-    const updatedTodo = await Todo.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        { new: true }
+    const updatedTodo = await Todos.update(
+        {
+            task: "T-ASK 1"
+        },
+        {
+            where: {
+                id: req.params.id
+            }
+        }
     );
 
     res.status(200).json({
@@ -71,7 +83,7 @@ const updateTodo = asyncHandler(async (req, res) => {
 //@access   private
 const deleteTodo = asyncHandler(async (req, res) => {
 
-    const todo = await Todo.findById(req.params.id);
+    const todo = await Todos.findByPk(req.params.id);
 
     if (!todo) {
 
@@ -81,7 +93,7 @@ const deleteTodo = asyncHandler(async (req, res) => {
 
     }
 
-    await todo.remove();
+    await todo.destroy({ where: { id: req.params.id } });
 
     res.status(200).json({ message: `Todo Deleted ${req.params.id}` });
 
