@@ -1,6 +1,9 @@
 const asyncHandler = require('express-async-handler');
 const Sequelize = require('sequelize');
+const fs = require('fs');
+
 const sequelize = require('../config/db');;
+
 
 const Todos = require('../models/todos')
     (sequelize, Sequelize.DataTypes, Sequelize.Model);
@@ -103,9 +106,24 @@ const deleteTodo = asyncHandler(async (req, res) => {
 
     }
 
+    //console.log(todo);
+
+    const path = process.cwd() + '/' + todo.image;
+
     await todo.destroy({ where: { id: req.params.id } });
 
-    res.status(200).json({ message: `Todo Deleted ${req.params.id}` });
+    try {
+
+        fs.unlinkSync(path)
+
+        console.log("fileRemoved");
+
+    } catch (err) {
+
+        console.error(err)
+    }
+
+    res.status(200).json({ message: `Todo Deleted ${req.params.id}`, data: todo });
 
 })
 

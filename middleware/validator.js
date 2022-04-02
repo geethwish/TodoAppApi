@@ -24,7 +24,7 @@ exports.userValidator = [
         .trim()
         .not()
         .isEmpty()
-        .isLength({ min: 5 })
+        .isLength({ min: 3 })
         .withMessage('Task cannot be empty and must be more than 3 characters long'),
     check('email')
         .normalizeEmail()
@@ -47,6 +47,8 @@ exports.userValidator = [
                 throw new Error('Both password must be the same')
 
             }
+
+            return true
         })
     ,
 ]

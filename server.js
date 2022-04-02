@@ -13,7 +13,7 @@ const port = process.env.PORT || 3000;
 dbTest()
 
 const app = express();
-
+app.use('/uploads', express.static('uploads'))
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
