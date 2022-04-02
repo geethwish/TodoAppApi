@@ -32,9 +32,10 @@ const createTodo = asyncHandler(async (req, res) => {
 
     const todo = await Todos.create({
         //task: req.body.task
-        task: "task 1",
-        description: "sample description",
-        status: "pending",
+        task: req.body.task,
+        description: req.body.description,
+        status: req.body.status,
+        image: req.body.image,
         userId: "1"
     });
 
@@ -63,7 +64,11 @@ const updateTodo = asyncHandler(async (req, res) => {
 
     const updatedTodo = await Todos.update(
         {
-            task: "T-ASK 1"
+            task: req.body.task,
+            description: req.body.description,
+            status: req.body.status,
+            image: req.body.image,
+            userId: "1"
         },
         {
             where: {
