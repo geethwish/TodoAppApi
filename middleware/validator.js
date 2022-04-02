@@ -19,7 +19,7 @@ exports.todoValidator = [
         .withMessage('Status Cannot be empty'),
 ];
 
-exports.todoValidator = [
+exports.userValidator = [
     check('name')
         .trim()
         .not()

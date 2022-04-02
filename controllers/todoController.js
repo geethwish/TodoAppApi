@@ -22,6 +22,11 @@ const getTodoList = asyncHandler(async (req, res) => {
 //@access   private
 const createTodo = asyncHandler(async (req, res) => {
 
+    let imageFile;
+    let uploadPath;
+    let imageModifiedName;
+
+
     if (!req.body.task) {
 
         res.status(400);
@@ -35,7 +40,7 @@ const createTodo = asyncHandler(async (req, res) => {
         task: req.body.task,
         description: req.body.description,
         status: req.body.status,
-        image: req.body.image,
+        image: req.file.path || "",
         userId: "1"
     });
 
