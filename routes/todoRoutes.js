@@ -1,8 +1,11 @@
 const express = require('express');
-const router = express.Router();
+const multer = require('multer');
+
 const { getTodoList, createTodo, updateTodo, deleteTodo } = require('../controllers/todoController');
 const { todoValidator, customValidations } = require('../middleware/validator');
-const multer = require('multer')
+const { protect } = require('../middleware/auth');
+
+const router = express.Router();
 
 const storage = multer.diskStorage({
 
@@ -16,11 +19,11 @@ const storage = multer.diskStorage({
         cb(null, new Date().toISOString().replace(/:/g, '-') + file.originalname)
     }
 
-})
+});
 
 const limits = {
     fileSize: 1024 * 1024 * 10
-}
+};
 
 const fileFilter = (req, file, cb) => {
 
@@ -33,15 +36,15 @@ const fileFilter = (req, file, cb) => {
         cb(null, false)
 
     }
-}
+};
 
 const upload = multer({ storage: storage, limits: limits, fileFilter: fileFilter });
 
-router.get('/list', getTodoList)
+router.get('/list', protect, getTodoList)
 
-router.post('/', upload.single('image'), todoValidator, customValidations, createTodo)
+router.post('/', protect, upload.single('image'), todoValidator, customValidations, createTodo)
 
-router.route('/:id').delete(deleteTodo).put(todoValidator, customValidations, updateTodo)
+router.route('/:id').delete(protect, deleteTodo).put(protect, todoValidator, customValidations, updateTodo)
 
 
 

@@ -2,18 +2,21 @@ const asyncHandler = require('express-async-handler');
 const Sequelize = require('sequelize');
 const fs = require('fs');
 
-const sequelize = require('../config/db');;
+const sequelize = require('../config/db');
 
-
-const Todos = require('../models/todos')
-    (sequelize, Sequelize.DataTypes, Sequelize.Model);
+const Todos = require('../models/todos')(sequelize, Sequelize.DataTypes, Sequelize.Model);
+const User = require('../models/user')(sequelize, Sequelize.DataTypes, Sequelize.Model);
 
 //@desc     Get Todo List
 //@route    GET /api/todoList
 //@access   private
 const getTodoList = asyncHandler(async (req, res) => {
 
-    const todoList = await Todos.findAll();
+    const todoList = await Todos.findAll({
+        where: {
+            userId: req.user.id
+        }
+    });
 
     res.status(200).json(todoList);
 
@@ -25,26 +28,13 @@ const getTodoList = asyncHandler(async (req, res) => {
 //@access   private
 const createTodo = asyncHandler(async (req, res) => {
 
-    let imageFile;
-    let uploadPath;
-    let imageModifiedName;
-
-
-    if (!req.body.task) {
-
-        res.status(400);
-
-        throw new Error('Please add a Task');
-
-    }
-
     const todo = await Todos.create({
         //task: req.body.task
         task: req.body.task,
         description: req.body.description,
         status: req.body.status,
         image: req.file.path || "",
-        userId: "1"
+        userId: req.user.id
     });
 
     res.status(200).json({
@@ -62,11 +52,30 @@ const updateTodo = asyncHandler(async (req, res) => {
 
     const todo = await Todos.findByPk(req.params.id);
 
+    const user = await User.findByPk(req.user.id);
+
+    // check for user
+    if (!user) {
+
+        res.status(401);
+
+        throw new Error('Todo Record Not Found');
+
+    }
+
     if (!todo) {
 
         res.status(400);
 
         throw new Error('Todo Record Not Found');
+
+    }
+
+    if (todo.userId !== user.id) {
+
+        res.status(401);
+
+        throw new Error("You don't have permission to take actions");
 
     }
 
@@ -98,6 +107,16 @@ const deleteTodo = asyncHandler(async (req, res) => {
 
     const todo = await Todos.findByPk(req.params.id);
 
+    const user = await User.findByPk(req.user.id);
+
+    if (!user) {
+
+        res.status(401);
+
+        throw new Error('Todo Record Not Found');
+
+    }
+
     if (!todo) {
 
         res.status(400);
@@ -106,7 +125,14 @@ const deleteTodo = asyncHandler(async (req, res) => {
 
     }
 
-    //console.log(todo);
+    if (todo.userId !== user.id) {
+
+        res.status(401);
+
+        throw new Error("You don't have permission to take actions");
+
+    }
+
 
     const path = process.cwd() + '/' + todo.image;
 
