@@ -17,6 +17,9 @@ exports.todoValidator = [
         .not()
         .isEmpty()
         .withMessage('Status Cannot be empty'),
+    check('image')
+        .isEmpty()
+        .withMessage('Image Cannot be empty'),
 ];
 
 exports.userValidator = [
@@ -67,6 +70,6 @@ exports.customValidations = (req, res, next) => {
 
     }
 
-    res.json({ success: false, message: error });
+    res.status(400).json({ success: false, message: error });
 
 }

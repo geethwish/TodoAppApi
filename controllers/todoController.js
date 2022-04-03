@@ -29,7 +29,6 @@ const getTodoList = asyncHandler(async (req, res) => {
 const createTodo = asyncHandler(async (req, res) => {
 
     const todo = await Todos.create({
-        //task: req.body.task
         task: req.body.task,
         description: req.body.description,
         status: req.body.status,
@@ -52,10 +51,8 @@ const updateTodo = asyncHandler(async (req, res) => {
 
     const todo = await Todos.findByPk(req.params.id);
 
-    const user = await User.findByPk(req.user.id);
-
     // check for user
-    if (!user) {
+    if (!req.user) {
 
         res.status(401);
 
@@ -71,7 +68,7 @@ const updateTodo = asyncHandler(async (req, res) => {
 
     }
 
-    if (todo.userId !== user.id) {
+    if (todo.userId !== req.user.id) {
 
         res.status(401);
 
@@ -85,7 +82,7 @@ const updateTodo = asyncHandler(async (req, res) => {
             description: req.body.description,
             status: req.body.status,
             image: req.body.image,
-            userId: "1"
+            userId: req.user.id
         },
         {
             where: {
@@ -107,7 +104,7 @@ const deleteTodo = asyncHandler(async (req, res) => {
 
     const todo = await Todos.findByPk(req.params.id);
 
-    const user = await User.findByPk(req.user.id);
+    const user = req.user;
 
     if (!user) {
 

@@ -29,7 +29,8 @@ const loginUser = asyncHandler(async (req, res) => {
                 email: user.email,
                 token: generateToken(user.id)
             },
-            message: 'User logged in'
+            message: 'User logged in',
+            status: "success"
         });
 
     } else {
@@ -80,7 +81,8 @@ const registerUser = asyncHandler(async (req, res) => {
                 email: user.email,
                 token: generateToken(user.id)
             },
-            message: 'User Created'
+            message: 'success',
+            status: "success"
         });
 
     } else {
@@ -98,18 +100,7 @@ const registerUser = asyncHandler(async (req, res) => {
 //@access   Private
 const getMe = asyncHandler(async (req, res) => {
 
-    const { id, name, email } = await User.findByPk(req.user.id);
-
-
-
-    res.status(200).json({
-        data: {
-            id: id,
-            name: name,
-            email: email,
-        },
-        message: 'My details'
-    });
+    res.status(200).json(req.user);
 
 });
 
