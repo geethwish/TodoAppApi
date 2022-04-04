@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+
+#Mysql database service
+
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: example
+
+
+ #Node js API service
+  api:
+    build:  .
+    ports:
+      - 5000:5000
+    environment:
+      PORT: todo5000
+      DB_NAME:  todo
+      DB_USERNAME:  root
+      DB_PASSWORD:  todo""
+      DB_DRIVER:  mysql
+      DB_HOST:  todolocalhost
+      JWT_SECRET:  todohello
+      NAME: Todo

@@ -28,11 +28,11 @@ exports.userValidator = [
         .not()
         .isEmpty()
         .isLength({ min: 3 })
-        .withMessage('Task cannot be empty and must be more than 3 characters long'),
+        .withMessage('Name cannot be empty and must be more than 3 characters long'),
     check('email')
         .normalizeEmail()
         .isEmail()
-        .withMessage("Description cannot be empty"),
+        .withMessage("Email cannot be empty"),
     check('password')
         .trim()
         .not()
