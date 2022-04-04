@@ -44,7 +44,7 @@ router.get('/list', protect, getTodoList)
 
 router.post('/', protect, upload.single('image'), todoValidator, customValidations, createTodo)
 
-router.route('/:id').delete(protect, deleteTodo).put(protect, todoValidator, customValidations, updateTodo)
+router.route('/:id').delete(protect, deleteTodo).put(protect, upload.single('image'), updateTodo)
 
 
 

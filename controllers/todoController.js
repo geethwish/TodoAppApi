@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const Sequelize = require('sequelize');
 const fs = require('fs');
+const { Op } = require("sequelize");
 
 const sequelize = require('../config/db');
 
@@ -12,9 +13,41 @@ const User = require('../models/user')(sequelize, Sequelize.DataTypes, Sequelize
 //@access   private
 const getTodoList = asyncHandler(async (req, res) => {
 
+    const status = req.query.status;
+    const startDate = req.query.startDate
+    const endDate = req.query.endDate
+
+
+    let searchConditions = {};
+
+    searchConditions.userId = req.user.id;
+
+    if (status) {
+
+        searchConditions.status = status;
+
+    }
+
+    if (status) {
+
+        searchConditions.status = status;
+
+    }
+
+    if (startDate && endDate) {
+
+        searchConditions.createdAt = {
+            [Op.between]: [startDate, endDate]
+        }
+
+    }
+
+    console.log(startDate);
+
+
     const todoList = await Todos.findAll({
         where: {
-            userId: req.user.id
+            ...searchConditions
         }
     });
 
@@ -129,7 +162,6 @@ const deleteTodo = asyncHandler(async (req, res) => {
         throw new Error("You don't have permission to take actions");
 
     }
-
 
     const path = process.cwd() + '/' + todo.image;
 
